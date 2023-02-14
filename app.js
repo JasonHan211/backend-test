@@ -39,10 +39,18 @@ app.get('/', async (req, res) => {
 
 // Search API endpoint to filter comments based on all the available fields
 app.get('/search', async (req, res) => {
-  const { postId, id, name, email, body } = req.query;
+  const { postId, id, name, email, body, isActive } = req.query;
   try {
     const { data: comments } = await axios.get(commentsUrl);
     let filteredComments = comments;
+
+    filteredComments.forEach(element => {
+      element.isActive = true;
+    });
+    
+    if (isActive){
+      filteredComments = filteredComments.filter(comment => comment.isActive.toString() === isActive);
+    }
 
     if (postId) {
       filteredComments = filteredComments.filter(comment => comment.postId.toString() === postId.toString());
